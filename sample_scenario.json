@@ -1,0 +1,65 @@
+{
+  "purchase_price": 3000000.0,
+  "closing_costs": 150000.0,
+  "wc_months": 3,
+  "wc_monthly_opex": 60000.0,
+  "hist_sde": 900000.0,
+  "gm_salary": 180000.0,
+  "normalized_adj": 30000.0,
+  "maint_capex": 50000.0,
+  "growth_capex": 0.0,
+  "revenue_y1": 4500000.0,
+  "cogs_pct": 55.0,
+  "nwc_days": {
+    "ar": 30,
+    "ap": 20,
+    "inv": 15
+  },
+  "investors": [
+    {
+      "name": "Sponsor",
+      "pct": 60.0,
+      "contribution": 420000.0
+    },
+    {
+      "name": "Angel 1",
+      "pct": 25.0,
+      "contribution": 175000.0
+    },
+    {
+      "name": "Angel 2",
+      "pct": 15.0,
+      "contribution": 105000.0
+    }
+  ],
+  "follow_on": [
+    {
+      "name": "Angel 1",
+      "year": 2,
+      "month": 1,
+      "amount": 25000.0
+    },
+    {
+      "name": "Sponsor",
+      "year": 3,
+      "month": 6,
+      "amount": 50000.0
+    }
+  ],
+  "sba_principal": 1800000.0,
+  "sba_rate": 10.0,
+  "sba_term_months": 120,
+  "sba_io_months": 0,
+  "seller_principal": 450000.0,
+  "seller_rate": 6.0,
+  "seller_term_months": 60,
+  "seller_standby_months": 24,
+  "sde_growth_pct": 3.0,
+  "retain_pct": 10.0,
+  "refi": {
+    "enable": false,
+    "year": 3,
+    "new_rate_pct": 8.5,
+    "new_term_months": 120
+  }
+}
