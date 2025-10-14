@@ -6,104 +6,104 @@ from engine import compute
 from utils import to_excel_bytes, to_pdf_bytes
 from input_formats import parse_money, parse_percent, fmt_money, fmt_number, fmt_percent
 
-st.set_page_config(page_title=\"Treehouse Deal Calculator v3.1 (hints-in-JSON)\", layout=\"wide\")
+st.set_page_config(page_title="Treehouse Deal Calculator v3.1 (hints-in-JSON)", layout="wide")
 
 # Optional key
-if os.getenv(\"APP_KEY\"):
-    gate = st.text_input(\"Enter access key\", type=\"password\")
-    if gate != os.getenv(\"APP_KEY\"):
+if os.getenv("APP_KEY"):
+    gate = st.text_input("Enter access key", type="password")
+    if gate != os.getenv("APP_KEY"):
         st.stop()
 
-st.title(\"Treehouse Ventures • Deal Calculator (Web v3.1)\")
-st.caption(\"Formatted inputs/outputs • hover hints • Definitions • JSON export with _hints\")
+st.title("Treehouse Ventures • Deal Calculator (Web v3.1)")
+st.caption("Formatted inputs/outputs • hover hints • Definitions • JSON export with _hints")
 
-def money_input(label: str, value: float, key: str, help: str = \"\") -> float:
+def money_input(label: str, value: float, key: str, help: str = "") -> float:
     default_str = fmt_money(value, 2)
     s = st.text_input(label, value=default_str, key=key, help=help)
     val, ok = parse_money(s, default=value)
     if not ok:
-        st.warning(f\"'{label}' is not a valid amount. Example: {fmt_money(3000000,0)}\")
+        st.warning(f"'{label}' is not a valid amount. Example: {fmt_money(3000000,0)}")
         return value
     return val
 
-def percent_input(label: str, value_pct: float, key: str, help: str = \"\") -> float:
+def percent_input(label: str, value_pct: float, key: str, help: str = "") -> float:
     default_str = fmt_percent(value_pct, 2)
     s = st.text_input(label, value=default_str, key=key, help=help)
     val, ok = parse_percent(s, default=value_pct)
     if not ok:
-        st.warning(f\"'{label}' is not a valid percent. Example: {fmt_percent(10.0)}\")
+        st.warning(f"'{label}' is not a valid percent. Example: {fmt_percent(10.0)}")
         return value_pct
     return val
 
 H = {
-    \"purchase_price\": \"**What you pay for the business at closing.** Example: Enter 3,000,000 for a $3M deal. *Impact:* Higher price raises required funding and debt service.\",
-    \"closing_costs\": \"**Fees and transaction costs paid at closing.** Example: Legal, diligence, lender fees totaling 150,000. *Impact:* Increases total cash needed at close.\",
-    \"wc_months\": \"**Months of operating expenses you want as a buffer.** Example: 3 months. *Impact:* More buffer = safer runway but higher cash need.\",
-    \"wc_monthly_opex\": \"**Your average monthly operating expenses.** Example: 60,000. *Impact:* Drives the size of the buffer (months × OpEx).\",
+    "purchase_price": "**What you pay for the business at closing.** Example: Enter 3,000,000 for a $3M deal. *Impact:* Higher price raises required funding and debt service.",
+    "closing_costs": "**Fees and transaction costs paid at closing.** Example: Legal, diligence, lender fees totaling 150,000. *Impact:* Increases total cash needed at close.",
+    "wc_months": "**Months of operating expenses you want as a buffer.** Example: 3 months. *Impact:* More buffer = safer runway but higher cash need.",
+    "wc_monthly_opex": "**Your average monthly operating expenses.** Example: 60,000. *Impact:* Drives the size of the buffer (months × OpEx).",
 
-    \"hist_sde\": \"**Seller’s Discretionary Earnings (historical annual).** Example: 900,000. *Impact:* Starting point for cash flow to service debt and pay dividends.\",
-    \"gm_salary\": \"**Salary to replace the owner’s time.** Example: 180,000. *Impact:* Reduces SDE available after you hire management.\",
-    \"normalized_adj\": \"**Ongoing add-backs or deductions.** Example: Remove one-time legal fees +30,000. *Impact:* Adjusts SDE to a sustainable level.\",
+    "hist_sde": "**Seller’s Discretionary Earnings (historical annual).** Example: 900,000. *Impact:* Starting point for cash flow to service debt and pay dividends.",
+    "gm_salary": "**Salary to replace the owner’s time.** Example: 180,000. *Impact:* Reduces SDE available after you hire management.",
+    "normalized_adj": "**Ongoing add-backs or deductions.** Example: Remove one-time legal fees +30,000. *Impact:* Adjusts SDE to a sustainable level.",
 
-    \"maint_capex\": \"**Annual spend to maintain the business.** Example: 50,000. *Impact:* Reduces CFADS—understating it can inflate dividends.\",
-    \"growth_capex\": \"**Annual investments to grow (optional).** Example: 100,000 for new equipment. *Impact:* Lowers FCFE today for potential future gains.\",
+    "maint_capex": "**Annual spend to maintain the business.** Example: 50,000. *Impact:* Reduces CFADS—understating it can inflate dividends.",
+    "growth_capex": "**Annual investments to grow (optional).** Example: 100,000 for new equipment. *Impact:* Lowers FCFE today for potential future gains.",
 
-    \"revenue_y1\": \"**Expected Year-1 revenue.** Example: 4,500,000. *Impact:* Used with COGS% to model working capital needs (AR/Inv/AP).\",
-    \"cogs_pct\": \"**COGS as % of revenue.** Example: 55%. *Impact:* Affects inventory/AP and free cash flow via ΔNWC.\",
+    "revenue_y1": "**Expected Year-1 revenue.** Example: 4,500,000. *Impact:* Used with COGS% to model working capital needs (AR/Inv/AP).",
+    "cogs_pct": "**COGS as % of revenue.** Example: 55%. *Impact:* Affects inventory/AP and free cash flow via ΔNWC.",
 
-    \"ar_days\": \"**Average days to collect invoices (AR Days).** Example: Net-30 → 30. *Impact:* Higher AR days ties up more cash in receivables.\",
-    \"inv_days\": \"**Average days you hold inventory.** Example: 15. *Impact:* More inventory days = more cash tied up.\",
-    \"ap_days\": \"**Average days to pay suppliers (AP Days).** Example: 20. *Impact:* Higher AP days frees cash but may strain suppliers.\",
+    "ar_days": "**Average days to collect invoices (AR Days).** Example: Net-30 → 30. *Impact:* Higher AR days ties up more cash in receivables.",
+    "inv_days": "**Average days you hold inventory.** Example: 15. *Impact:* More inventory days = more cash tied up.",
+    "ap_days": "**Average days to pay suppliers (AP Days).** Example: 20. *Impact:* Higher AP days frees cash but may strain suppliers.",
 
-    \"investor_pct\": \"**Ownership percentage for this investor.** Example: 25%. *Impact:* Controls their share of dividends and exit economics.\",
-    \"investor_contrib\": \"**Cash this investor puts in at close.** Example: 175,000. *Impact:* Adds to Sources; used for payback and equity multiple.\",
+    "investor_pct": "**Ownership percentage for this investor.** Example: 25%. *Impact:* Controls their share of dividends and exit economics.",
+    "investor_contrib": "**Cash this investor puts in at close.** Example: 175,000. *Impact:* Adds to Sources; used for payback and equity multiple.",
 
-    \"sba_principal\": \"**Loan amount from SBA lender.** Example: 1,800,000. *Impact:* Larger loans raise debt service and DSCR pressure.\",
-    \"sba_rate\": \"**SBA loan annual interest rate.** Example: 10.00%. *Impact:* Higher rates increase payments, lowering FCFE.\",
-    \"sba_term\": \"**SBA loan term in months.** Example: 120. *Impact:* Longer terms reduce monthly payment but extend debt.\",
-    \"sba_io\": \"**Months of interest-only on SBA.** Example: 0. *Impact:* Lowers early payments but backloads principal.\",
+    "sba_principal": "**Loan amount from SBA lender.** Example: 1,800,000. *Impact:* Larger loans raise debt service and DSCR pressure.",
+    "sba_rate": "**SBA loan annual interest rate.** Example: 10.00%. *Impact:* Higher rates increase payments, lowering FCFE.",
+    "sba_term": "**SBA loan term in months.** Example: 120. *Impact:* Longer terms reduce monthly payment but extend debt.",
+    "sba_io": "**Months of interest-only on SBA.** Example: 0. *Impact:* Lowers early payments but backloads principal.",
 
-    \"seller_principal\": \"**Seller-financed note amount.** Example: 450,000. *Impact:* Reduces upfront cash needed; adds another payment stream.\",
-    \"seller_rate\": \"**Seller note annual interest rate.** Example: 6.00%. *Impact:* Cost of the seller financing.\",
-    \"seller_term\": \"**Seller note term in months.** Example: 60. *Impact:* Shorter term means higher monthly payments.\",
-    \"seller_standby\": \"**Months with no seller payments (interest accrues).** Example: 24. *Impact:* Improves early cash flow; increases later balance.\",
+    "seller_principal": "**Seller-financed note amount.** Example: 450,000. *Impact:* Reduces upfront cash needed; adds another payment stream.",
+    "seller_rate": "**Seller note annual interest rate.** Example: 6.00%. *Impact:* Cost of the seller financing.",
+    "seller_term": "**Seller note term in months.** Example: 60. *Impact:* Shorter term means higher monthly payments.",
+    "seller_standby": "**Months with no seller payments (interest accrues).** Example: 24. *Impact:* Improves early cash flow; increases later balance.",
 
-    \"sde_growth\": \"**Annual growth applied to SDE/Revenue (Y2–Y5).** Example: 3.00%. *Impact:* Drives future CFADS and dividends.\",
+    "sde_growth": "**Annual growth applied to SDE/Revenue (Y2–Y5).** Example: 3.00%. *Impact:* Drives future CFADS and dividends.",
 
-    \"retain_pct\": \"**Share of FCFE kept in the business before dividends.** Example: 10%. *Impact:* Builds cash cushion; slows investor payback.\",
-    \"refi\": \"**Refinance SBA in a future year with new rate/term.** Example: Year 3 at 8.5%. *Impact:* Can lower debt service and improve DSCR.\",
+    "retain_pct": "**Share of FCFE kept in the business before dividends.** Example: 10%. *Impact:* Builds cash cushion; slows investor payback.",
+    "refi": "**Refinance SBA in a future year with new rate/term.** Example: Year 3 at 8.5%. *Impact:* Can lower debt service and improve DSCR.",
 
-    \"SDE\": \"**Seller’s Discretionary Earnings per period.** Example: $75,000/mo on $900k/yr. *Impact:* Core cash engine that funds everything else.\",
-    \"CFADS\": \"**Cash Flow Available for Debt Service** = SDE − Maint CapEx − ΔNWC. *Impact:* If this shrinks, DSCR falls and risk rises.\",
-    \"FCFE\": \"**Free Cash Flow to Equity** = CFADS − Debt Service − Growth CapEx. *Impact:* Funds dividends and retained cash.\",
-    \"DSCR\": \"**Debt Service Coverage Ratio** = CFADS / Debt Service. *Impact:* Lenders want ≥1.25×; lower is risky.\",
-    \"Debt Service\": \"**Total required loan payments** (SBA + Seller). *Impact:* The fixed hurdle CFADS must clear.\",
-    \"Distributable\": \"**Cash available to pay investors** (after retention). *Impact:* Drives investor dividends.\",
-    \"Retained\": \"**Positive FCFE held in the business.** *Impact:* Builds runway and resilience.\",
-    \"Cash Balance\": \"**Cumulative cash on hand** (starts with the buffer). *Impact:* Safety net to survive bumps.\",
-    \"Follow-on Inflow\": \"**Additional equity injected during operations.** *Impact:* Temporarily boosts cash and speeds payback.\"
+    "SDE": "**Seller’s Discretionary Earnings per period.** Example: $75,000/mo on $900k/yr. *Impact:* Core cash engine that funds everything else.",
+    "CFADS": "**Cash Flow Available for Debt Service** = SDE − Maint CapEx − ΔNWC. *Impact:* If this shrinks, DSCR falls and risk rises.",
+    "FCFE": "**Free Cash Flow to Equity** = CFADS − Debt Service − Growth CapEx. *Impact:* Funds dividends and retained cash.",
+    "DSCR": "**Debt Service Coverage Ratio** = CFADS / Debt Service. *Impact:* Lenders want ≥1.25×; lower is risky.",
+    "Debt Service": "**Total required loan payments** (SBA + Seller). *Impact:* The fixed hurdle CFADS must clear.",
+    "Distributable": "**Cash available to pay investors** (after retention). *Impact:* Drives investor dividends.",
+    "Retained": "**Positive FCFE held in the business.** *Impact:* Builds runway and resilience.",
+    "Cash Balance": "**Cumulative cash on hand** (starts with the buffer). *Impact:* Safety net to survive bumps.",
+    "Follow-on Inflow": "**Additional equity injected during operations.** *Impact:* Temporarily boosts cash and speeds payback."
 }
 
 DEFAULT = {
-    \"purchase_price\": 3000000.0, \"closing_costs\": 150000.0,
-    \"wc_months\": 3, \"wc_monthly_opex\": 60000.0,
-    \"hist_sde\": 900000.0, \"gm_salary\": 180000.0, \"normalized_adj\": 30000.0,
-    \"maint_capex\": 50000.0, \"growth_capex\": 0.0,
-    \"revenue_y1\": 4500000.0, \"cogs_pct\": 55.0,
-    \"nwc_days\": {\"ar\": 30, \"ap\": 20, \"inv\": 15},
-    \"investors\": [
-        {\"name\":\"Sponsor\", \"pct\":60.0, \"contribution\":420000.0},
-        {\"name\":\"Angel 1\", \"pct\":25.0, \"contribution\":175000.0},
-        {\"name\":\"Angel 2\", \"pct\":15.0, \"contribution\":105000.0},
+    "purchase_price": 3000000.0, "closing_costs": 150000.0,
+    "wc_months": 3, "wc_monthly_opex": 60000.0,
+    "hist_sde": 900000.0, "gm_salary": 180000.0, "normalized_adj": 30000.0,
+    "maint_capex": 50000.0, "growth_capex": 0.0,
+    "revenue_y1": 4500000.0, "cogs_pct": 55.0,
+    "nwc_days": {"ar": 30, "ap": 20, "inv": 15},
+    "investors": [
+        {"name":"Sponsor", "pct":60.0, "contribution":420000.0},
+        {"name":"Angel 1", "pct":25.0, "contribution":175000.0},
+        {"name":"Angel 2", "pct":15.0, "contribution":105000.0},
     ],
-    \"follow_on\": [
-        {\"name\":\"Angel 1\",\"year\":2,\"month\":1,\"amount\":25000.0},
-        {\"name\":\"Sponsor\",\"year\":3,\"month\":6,\"amount\":50000.0}
+    "follow_on": [
+        {"name":"Angel 1","year":2,"month":1,"amount":25000.0},
+        {"name":"Sponsor","year":3,"month":6,"amount":50000.0}
     ],
-    \"sba_principal\":1800000.0,\"sba_rate\":10.0,\"sba_term_months\":120,\"sba_io_months\":0,
-    \"seller_principal\":450000.0,\"seller_rate\":6.0,\"seller_term_months\":60,\"seller_standby_months\":24,
-    \"sde_growth_pct\":3.0,\"retain_pct\":10.0,
-    \"refi\":{\"enable\":False,\"year\":3,\"new_rate_pct\":8.5,\"new_term_months\":120}
+    "sba_principal":1800000.0,"sba_rate":10.0,"sba_term_months":120,"sba_io_months":0,
+    "seller_principal":450000.0,"seller_rate":6.0,"seller_term_months":60,"seller_standby_months":24,
+    "sde_growth_pct":3.0,"retain_pct":10.0,
+    "refi":{"enable":False,"year":3,"new_rate_pct":8.5,"new_term_months":120}
 }
 
 if "library" not in st.session_state:
