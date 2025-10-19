@@ -235,7 +235,7 @@ with tabs[4]:
             "name": st.column_config.TextColumn("Investor Name", help="Choose an existing investor's name."),
             "year": st.column_config.NumberColumn("Year", help="Year (1–5) when cash is injected.", step=1),
             "month": st.column_config.NumberColumn("Month", help="Month (1–12) within the year.", step=1),
-            "amount": st.column_config.NumberColumn("Amount", help="Dollar amount to inject.", format="$%,.0f"),
+            "amount": st.column_config.NumberColumn("Amount", help="Dollar amount to inject.", format="%,.0f"),
         })
     cfg["follow_on"] = edited.to_dict(orient="records")
 
@@ -264,45 +264,45 @@ st.markdown("### Year 1 • Monthly Cash Flow")
 df_y1 = pd.DataFrame(outs["y1"])
 col_config_y1 = {
     "Month": st.column_config.NumberColumn("Month"),
-    "SDE": st.column_config.NumberColumn("SDE", help=H["SDE"], format="$%,.0f"),
-    "Maint CapEx": st.column_config.NumberColumn("Maint CapEx", help=H["maint_capex"], format="$%,.0f"),
-    "Growth CapEx": st.column_config.NumberColumn("Growth CapEx", help=H["growth_capex"], format="$%,.0f"),
-    "SBA Payment": st.column_config.NumberColumn("SBA Payment", help="Monthly SBA loan payment.", format="$%,.0f"),
-    "Seller Payment": st.column_config.NumberColumn("Seller Payment", help="Monthly seller note payment.", format="$%,.0f"),
-    "Debt Service": st.column_config.NumberColumn("Debt Service", help=H["Debt Service"], format="$%,.0f"),
-    "CFADS": st.column_config.NumberColumn("CFADS", help=H["CFADS"], format="$%,.0f"),
-    "FCFE": st.column_config.NumberColumn("FCFE", help=H["FCFE"], format="$%,.0f"),
-    "Follow-on Inflow": st.column_config.NumberColumn("Follow-on Inflow", help=H["Follow-on Inflow"], format="$%,.0f"),
-    "Retained": st.column_config.NumberColumn("Retained", help=H["Retained"], format="$%,.0f"),
-    "Distributable": st.column_config.NumberColumn("Distributable", help=H["Distributable"], format="$%,.0f"),
-    "Cash Balance": st.column_config.NumberColumn("Cash Balance", help=H["Cash Balance"], format="$%,.0f"),
+    "SDE": st.column_config.NumberColumn("SDE", help=H["SDE"], format="%,.0f"),
+    "Maint CapEx": st.column_config.NumberColumn("Maint CapEx", help=H["maint_capex"], format="%,.0f"),
+    "Growth CapEx": st.column_config.NumberColumn("Growth CapEx", help=H["growth_capex"], format="%,.0f"),
+    "SBA Payment": st.column_config.NumberColumn("SBA Payment", help="Monthly SBA loan payment.", format="%,.0f"),
+    "Seller Payment": st.column_config.NumberColumn("Seller Payment", help="Monthly seller note payment.", format="%,.0f"),
+    "Debt Service": st.column_config.NumberColumn("Debt Service", help=H["Debt Service"], format="%,.0f"),
+    "CFADS": st.column_config.NumberColumn("CFADS", help=H["CFADS"], format="%,.0f"),
+    "FCFE": st.column_config.NumberColumn("FCFE", help=H["FCFE"], format="%,.0f"),
+    "Follow-on Inflow": st.column_config.NumberColumn("Follow-on Inflow", help=H["Follow-on Inflow"], format="%,.0f"),
+    "Retained": st.column_config.NumberColumn("Retained", help=H["Retained"], format="%,.0f"),
+    "Distributable": st.column_config.NumberColumn("Distributable", help=H["Distributable"], format="%,.0f"),
+    "Cash Balance": st.column_config.NumberColumn("Cash Balance", help=H["Cash Balance"], format="%,.0f"),
 }
 for c in df_y1.columns:
     if isinstance(c, str) and c.startswith("Dividend •"):
-        col_config_y1[c] = st.column_config.NumberColumn(c, help="Pro-rata investor dividend for the month.", format="$%,.0f")
+        col_config_y1[c] = st.column_config.NumberColumn(c, help="Pro-rata investor dividend for the month.", format="%,.0f")
 st.dataframe(df_y1, use_container_width=True, column_config=col_config_y1)
 
 st.markdown("### Years 1–5 • Annual Summary")
 df_y = pd.DataFrame(outs["years"])
 col_config_y = {
     "Year": st.column_config.NumberColumn("Year"),
-    "Pro-forma SDE": st.column_config.NumberColumn("Pro-forma SDE", help=H["SDE"], format="$%,.0f"),
-    "ΔNWC": st.column_config.NumberColumn("ΔNWC", help="Change in working capital; positive means cash outflow.", format="$%,.0f"),
-    "Maint CapEx": st.column_config.NumberColumn("Maint CapEx", help=H["maint_capex"], format="$%,.0f"),
-    "Growth CapEx": st.column_config.NumberColumn("Growth CapEx", help=H["growth_capex"], format="$%,.0f"),
-    "SBA Debt Service": st.column_config.NumberColumn("SBA Debt Service", help="Total SBA payments in the year.", format="$%,.0f"),
-    "Seller Debt Service": st.column_config.NumberColumn("Seller Debt Service", help="Total seller note payments in the year.", format="$%,.0f"),
-    "Total Debt Service": st.column_config.NumberColumn("Total Debt Service", help=H["Debt Service"], format="$%,.0f"),
-    "CFADS": st.column_config.NumberColumn("CFADS", help=H["CFADS"], format="$%,.0f"),
-    "FCFE": st.column_config.NumberColumn("FCFE", help=H["FCFE"], format="$%,.0f"),
-    "Follow-on Inflow": st.column_config.NumberColumn("Follow-on Inflow", help=H["Follow-on Inflow"], format="$%,.0f"),
-    "Retained": st.column_config.NumberColumn("Retained", help=H["Retained"], format="$%,.0f"),
-    "Distributable": st.column_config.NumberColumn("Distributable", help=H["Distributable"], format="$%,.0f"),
+    "Pro-forma SDE": st.column_config.NumberColumn("Pro-forma SDE", help=H["SDE"], format="%,.0f"),
+    "ΔNWC": st.column_config.NumberColumn("ΔNWC", help="Change in working capital; positive means cash outflow.", format="%,.0f"),
+    "Maint CapEx": st.column_config.NumberColumn("Maint CapEx", help=H["maint_capex"], format="%,.0f"),
+    "Growth CapEx": st.column_config.NumberColumn("Growth CapEx", help=H["growth_capex"], format="%,.0f"),
+    "SBA Debt Service": st.column_config.NumberColumn("SBA Debt Service", help="Total SBA payments in the year.", format="%,.0f"),
+    "Seller Debt Service": st.column_config.NumberColumn("Seller Debt Service", help="Total seller note payments in the year.", format="%,.0f"),
+    "Total Debt Service": st.column_config.NumberColumn("Total Debt Service", help=H["Debt Service"], format="%,.0f"),
+    "CFADS": st.column_config.NumberColumn("CFADS", help=H["CFADS"], format="%,.0f"),
+    "FCFE": st.column_config.NumberColumn("FCFE", help=H["FCFE"], format="%,.0f"),
+    "Follow-on Inflow": st.column_config.NumberColumn("Follow-on Inflow", help=H["Follow-on Inflow"], format="%,.0f"),
+    "Retained": st.column_config.NumberColumn("Retained", help=H["Retained"], format="%,.0f"),
+    "Distributable": st.column_config.NumberColumn("Distributable", help=H["Distributable"], format="%,.0f"),
     "DSCR": st.column_config.NumberColumn("DSCR", help=H["DSCR"], format="%.2f"),
 }
 for c in df_y.columns:
     if isinstance(c, str) and c.startswith("Investor Dividend •"):
-        col_config_y[c] = st.column_config.NumberColumn(c, help="Pro-rata investor dividend for the year.", format="$%,.0f")
+        col_config_y[c] = st.column_config.NumberColumn(c, help="Pro-rata investor dividend for the year.", format="%,.0f")
 st.dataframe(df_y, use_container_width=True, column_config=col_config_y)
 
 st.markdown("### Investor Summary (5 years)")
@@ -310,8 +310,8 @@ df_inv = pd.DataFrame(outs["investors"])
 col_config_inv = {
     "Investor": st.column_config.TextColumn("Investor"),
     "Ownership %": st.column_config.NumberColumn("Ownership %", help=H["investor_pct"], format="%.2f%%"),
-    "Contributed (incl. follow-ons)": st.column_config.NumberColumn("Contributed (incl. follow-ons)", help=H["investor_contrib"], format="$%,.0f"),
-    "Total Dividends (5y)": st.column_config.NumberColumn("Total Dividends (5y)", help="Total dividends paid to this investor over 5 years.", format="$%,.0f"),
+    "Contributed (incl. follow-ons)": st.column_config.NumberColumn("Contributed (incl. follow-ons)", help=H["investor_contrib"], format="%,.0f"),
+    "Total Dividends (5y)": st.column_config.NumberColumn("Total Dividends (5y)", help="Total dividends paid to this investor over 5 years.", format="%,.0f"),
     "Equity Multiple (5y)": st.column_config.NumberColumn("Equity Multiple (5y)", help="Total dividends divided by contributed capital. >1.0× means paid back.", format="%.2f"),
     "Payback Year": st.column_config.TextColumn("Payback Year", help="First year cumulative dividends exceed contributed capital."),
 }
